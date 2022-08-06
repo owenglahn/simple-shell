@@ -14,12 +14,13 @@ func main() {
 	for {
 		out, _ := exec.Command("pwd").Output()
 		fmt.Printf("\n %s :) ", strings.TrimSuffix(string(out), "\n"))
-		input, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-		if err = utils.ParseInput(input); err != nil {
-			fmt.Fprintln(os.Stderr, err)
+		input, _ := reader.ReadString('\n')
+		commands_in_sequence := strings.Split(input, ";")
+		errs := utils.ParseCommandsSequential(commands_in_sequence...)
+		for _, err := range errs {
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+			}
 		}
 	}
 }
