@@ -10,13 +10,31 @@ import (
 var wg sync.WaitGroup
 
 func ParseInput(input string) error {
-	input = strings.TrimSuffix(input, "\n")
 	args := strings.Split(input, " ")
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = os.Stdout
 	// cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	return cmd.Run()
+}
+
+func CommandSubsitution(input string) error {
+	input = strings.TrimSuffix(input, "\n")
+	backtick_split := strings.Split(input, "`")
+	execution_split := make([]string, 0)
+	for index, substr := range backtick_split {
+		if index%2 == 1 {
+			command_sub_errs := ParseCommandsSequential(substr)
+			command_sub_string := ""
+			for _, err := range command_sub_errs {
+				command_sub_string += err.Error()
+			}
+			execution_split = append(execution_split, command_sub_string)
+		} else {
+			execution_split = append(execution_split, substr)
+		}
+	}
+	return ParseInput(strings.Join(execution_split, " "))
 }
 
 func ParseCommandsParallel(input ...string) []error {
@@ -34,10 +52,11 @@ func ParseCommandsParallel(input ...string) []error {
 	return errors
 }
 
-func ParseCommandsSequential(input ...string) []error {
+func ParseCommandsSequential(input string) []error {
 	errors := make([]error, 0)
-	input = TrimWhiteSpaceFromAll(input)
-	for _, sequential_input := range input {
+	input = strings.TrimSuffix(input, "\n")
+	split_input := TrimWhiteSpaceFromAll(strings.Split(input, ";"))
+	for _, sequential_input := range split_input {
 		commands_in_parallel := strings.Split(sequential_input, "&")
 		errors = append(errors, ParseCommandsParallel(commands_in_parallel...)...)
 	}

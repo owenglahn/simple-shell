@@ -15,8 +15,7 @@ func main() {
 		out, _ := exec.Command("pwd").Output()
 		fmt.Printf("\n %s :) ", strings.TrimSuffix(string(out), "\n"))
 		input, _ := reader.ReadString('\n')
-		commands_in_sequence := strings.Split(input, ";")
-		errs := utils.ParseCommandsSequential(commands_in_sequence...)
+		errs := utils.ParseCommandsSequential(input)
 		for _, err := range errs {
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
