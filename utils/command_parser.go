@@ -10,7 +10,7 @@ import (
 var wg sync.WaitGroup
 
 func ParseInput(input string) error {
-	args := strings.Split(input, " ")
+	args := strings.Split(CommandSubsitution(input), " ")
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = os.Stdout
 	// cmd.Stderr = os.Stderr
@@ -18,7 +18,7 @@ func ParseInput(input string) error {
 	return cmd.Run()
 }
 
-func CommandSubsitution(input string) error {
+func CommandSubsitution(input string) string {
 	input = strings.TrimSuffix(input, "\n")
 	backtick_split := strings.Split(input, "`")
 	execution_split := make([]string, 0)
@@ -34,7 +34,7 @@ func CommandSubsitution(input string) error {
 			execution_split = append(execution_split, substr)
 		}
 	}
-	return ParseInput(strings.Join(execution_split, " "))
+	return strings.Join(execution_split, " ")
 }
 
 func ParseCommandsParallel(input ...string) []error {
