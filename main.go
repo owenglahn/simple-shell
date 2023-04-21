@@ -15,11 +15,12 @@ func main() {
 		out, _ := exec.Command("pwd").Output()
 		fmt.Printf("%s :) ", strings.TrimSuffix(string(out), "\n"))
 		input, _ := reader.ReadString('\n')
-		errs := utils.ParseCommandsSequential(input)
-		for _, err := range errs {
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
-			}
-		}
+		input = utils.ParseInput(input)
+		args := strings.Split(input, " ")
+		cmd := exec.Command(args[0], args[1:]...)
+		cmd.Stderr = os.Stderr
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Run()
 	}
 }
