@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -20,7 +21,13 @@ func ParseInput(input string) error {
 
 func CommandSubsitution(input string) string {
 	input = strings.TrimSuffix(input, "\n")
+	num_ticks := strings.Count(input, "`")
+	if num_ticks%2 == 1 {
+		// didn't close tick
+		fmt.Printf("Didn't close tick")
+	}
 	backtick_split := strings.Split(input, "`")
+	fmt.Printf("%v\n", backtick_split)
 	execution_split := make([]string, 0)
 	for index, substr := range backtick_split {
 		if index%2 == 1 {
